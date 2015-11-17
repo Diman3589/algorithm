@@ -1,5 +1,5 @@
 // Algorithm_Lab2.cpp : Defines the entry point for the console application.
-//
+// 
 
 #include "stdafx.h"
 #include "Stack.h"
@@ -11,6 +11,8 @@
 #include <cmath>
 
 #define PI 3.14159265
+
+#include <iostream>
 
 using namespace std;
 
