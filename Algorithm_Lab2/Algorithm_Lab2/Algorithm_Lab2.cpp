@@ -8,6 +8,9 @@
 #include <string>
 #include <map>
 #include <fstream>
+#include <cmath>
+
+#define PI 3.14159265
 
 using namespace std;
 
@@ -44,7 +47,7 @@ string infixToPostfix() {
 	operands.insert(pair<char, int>('^', 4));
 	while (ch != 0) {
 		it = operands.find(ch);
-		if (it != operands.end() && it->first == ch) {
+		if (it != operands.end()) {
 			if (lst.IsEmpty() == 0)
 				flag = true;
 			if (flag) {
@@ -58,7 +61,7 @@ string infixToPostfix() {
 			}
 			else if (it->second <= operands.find(lst.Top())->second) {
 				if (it->first == '(')
-					lst.Push(ch);;
+					lst.Push(ch);
 				if (it->first == ')') {
 					tmp = lst.Pop();
 					while (tmp != '(' && tmp != '\0') {
@@ -74,12 +77,15 @@ string infixToPostfix() {
 						resultExpression += lst.Pop();
 						it2 = operands.find(lst.Top());
 					}
-					if (tmpch> it2->first)
+					if (tmpch > it2->first)
 						lst.Push(tmpch);
 				}
 			}
 		}
 		else {
+			if (ch == 's') {
+
+			}
 			resultExpression += ch;
 		}
 	nextElem:
@@ -93,7 +99,8 @@ string infixToPostfix() {
 
 int main() {
 	readFile();
-	cout << infixToPostfix();
+	string expr = infixToPostfix();
+	cout << expr;
 	cout << endl;
 	system("pause");
 	return 0;
