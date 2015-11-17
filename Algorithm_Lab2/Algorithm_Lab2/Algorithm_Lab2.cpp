@@ -11,6 +11,8 @@
 
 using namespace std;
 
+void foo(){}
+
 int main() {
 	ifstream fin("expression.txt", ifstream::in);
 	string expression;
