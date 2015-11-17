@@ -1,5 +1,5 @@
 // Algorithm_Lab2.cpp : Defines the entry point for the console application.
-//
+// 
 
 #include "stdafx.h"
 #include "Stack.h"
@@ -8,6 +8,8 @@
 #include <string>
 #include <map>
 #include <fstream>
+
+#include <iostream>
 
 using namespace std;
 
