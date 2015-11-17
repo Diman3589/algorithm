@@ -11,12 +11,11 @@
 
 using namespace std;
 
-void foo(){}
+string expression;
+string vars;
 
-int main() {
+void readFile() {
 	ifstream fin("expression.txt", ifstream::in);
-	string expression;
-	string vars;
 	string line;
 	getline(fin, expression);
 	while (getline(fin, line)) {
@@ -24,12 +23,16 @@ int main() {
 		vars += "\n";
 	}
 	fin.close();
+}
+
+string infixToPostfix() {
 	char ch = expression[0];
 	char tmpch;
 	char tmp;
 	int i = 0;
 	bool flag = true;
 	map<char, int> operands;
+	map<char, int>::iterator it;
 	ListStack<char> lst;
 	string resultExpression = "";
 	operands.insert(pair<char, int>('(', 1));
@@ -39,8 +42,6 @@ int main() {
 	operands.insert(pair<char, int>('*', 3));
 	operands.insert(pair<char, int>('/', 3));
 	operands.insert(pair<char, int>('^', 4));
-	map<char, int>::iterator it;
-	
 	while (ch != 0) {
 		it = operands.find(ch);
 		if (it != operands.end() && it->first == ch) {
@@ -59,7 +60,7 @@ int main() {
 				if (it->first == '(')
 					lst.Push(ch);;
 				if (it->first == ')') {
- 					tmp = lst.Pop();
+					tmp = lst.Pop();
 					while (tmp != '(' && tmp != '\0') {
 						resultExpression += tmp;
 						tmp = lst.Pop();
@@ -81,14 +82,18 @@ int main() {
 		else {
 			resultExpression += ch;
 		}
-		nextElem:
+	nextElem:
 		i++;
 		ch = expression[i];
 	}
 	while (lst.IsEmpty() != 0)
 		resultExpression += lst.Pop();
-	cout << resultExpression;
-	cout << "lololol";
+	return resultExpression;
+}
+
+int main() {
+	readFile();
+	cout << infixToPostfix();
 	cout << endl;
 	system("pause");
 	return 0;
