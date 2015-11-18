@@ -203,9 +203,6 @@ string Calculating(string &expr) {
 		j++;
 		help = vars[j];
 	}
-	
-	for (auto it = args.begin(); it != args.end(); it++)
-		cout << it->first << " = " << it->second << endl;
 
 	char ch = expr[0];
 	int i = 0, first, second;
