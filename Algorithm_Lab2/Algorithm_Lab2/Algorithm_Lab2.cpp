@@ -32,6 +32,7 @@ void readFile() {
 }
 
 string infixToPostfix() {
+
 	char tmpch;
 	char tmp;
 	int k = 0;
