@@ -165,33 +165,33 @@ string infixToPostfix() {
 
 }
 
-string Calculating(string expr){
-	ListStack<string> operands;
-
-	char ch = expr[0];
-	int i = 0, first, second;
-	string helper;
-
-	while (ch != 0){
-		helper = "";
-		if (ch >= 0 && ch <= 9){
-			while (ch != ' ' || ch != 0 || ch != '*' || ch != '/' || ch != '+' || ch != '-' || ch != '^'){
-				helper += ch;
-				i++;
-				ch = expr[i];
-			}
-			operands.Push(helper);
-		}
-		else if (ch != ' '){		// Если ch - знак
-			if (!operands.IsEmpty()){
-				second = (int)operands.Pop();
-			}
-		}
-		i++;
-		ch = expr[i];
-	}
-	return operands.Pop();
-}
+//string Calculating(string expr){
+//	ListStack<string> operands;
+//
+//	char ch = expr[0];
+//	int i = 0, first, second;
+//	string helper;
+//
+//	while (ch != 0){
+//		helper = "";
+//		if (ch >= 0 && ch <= 9){
+//			while (ch != ' ' || ch != 0 || ch != '*' || ch != '/' || ch != '+' || ch != '-' || ch != '^'){
+//				helper += ch;
+//				i++;
+//				ch = expr[i];
+//			}
+//			operands.Push(helper);
+//		}
+//		else if (ch != ' '){		// Если ch - знак
+//			if (!operands.IsEmpty()){
+//				second = (int)operands.Pop();
+//			}
+//		}
+//		i++;
+//		ch = expr[i];
+//	}
+//	return operands.Pop();
+//}
 
 int main() {
 	setlocale(0, "Russian");
@@ -200,8 +200,8 @@ int main() {
 	cout << expr;
 	cout << endl;
 	
-	string result = Calculating(expr);
-	cout << result;
+	/*string result = Calculating(expr);
+	cout << result;*/
 	cout << endl;
 
 	system("pause");
