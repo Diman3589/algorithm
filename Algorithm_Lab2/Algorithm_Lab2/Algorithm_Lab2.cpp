@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <iomanip> 
 
 #define PI 3.14159265
 
@@ -28,7 +29,6 @@ void readFile() {
 		vars += line;
 		vars += "\n";
 	}
-	cout << vars[0];
 	fin.close();
 }
 
@@ -40,7 +40,7 @@ string infixToPostfix() {
 	int i = 0;
 	size_t find;
 	bool flag = true;
-	map<char, int> operands;
+	map<char, int> operators;
 	map<char, int>::iterator it;
 	map<string, string> functions;
 	map<string, string>::iterator iter;
@@ -59,13 +59,13 @@ string infixToPostfix() {
 	functions.insert(pair<string, string>("sqrt", "Л"));
 	functions.insert(pair<string, string>("sqrt3", "М"));
 
-	operands.insert(pair<char, int>('(', 1));
-	operands.insert(pair<char, int>(')', 1));
-	operands.insert(pair<char, int>('-', 2));
-	operands.insert(pair<char, int>('+', 2));
-	operands.insert(pair<char, int>('*', 3));
-	operands.insert(pair<char, int>('/', 3));
-	operands.insert(pair<char, int>('^', 4));
+	operators.insert(pair<char, int>('(', 1));
+	operators.insert(pair<char, int>(')', 1));
+	operators.insert(pair<char, int>('-', 2));
+	operators.insert(pair<char, int>('+', 2));
+	operators.insert(pair<char, int>('*', 3));
+	operators.insert(pair<char, int>('/', 3));
+	operators.insert(pair<char, int>('^', 4));
 
 	//replace functions to aliases
 	/*for (iter = functions.begin(); iter != functions.end(); iter++) {
@@ -75,8 +75,8 @@ string infixToPostfix() {
 	}*/
 	char ch = expression[0];
 	while (ch != 0) {
-		it = operands.find(ch);
-		if (it != operands.end()) {
+		it = operators.find(ch);
+		if (it != operators.end()) {
 			if (lst.IsEmpty() == 0)
 				flag = true;
 			if (flag) {
@@ -84,11 +84,11 @@ string infixToPostfix() {
 				flag = false;
 				goto nextElem;
 			}
-			if (it->second > operands.find(lst.Top())->second) {
+			if (it->second > operators.find(lst.Top())->second) {
 				lst.Push(ch);
 				goto nextElem;
 			}
-			else if (it->second <= operands.find(lst.Top())->second) {
+			else if (it->second <= operators.find(lst.Top())->second) {
 				if (it->first == '(')
 					lst.Push(ch);
 				if (it->first == ')') {
@@ -100,8 +100,8 @@ string infixToPostfix() {
 					}
 				}
 				else {
-					auto it1 = operands.find(ch);
-					auto it2 = operands.find(lst.Top());
+					auto it1 = operators.find(ch);
+					auto it2 = operators.find(lst.Top());
 					tmpch = ch;
 					while (it2->first != '(' && it1->second <= it2->second) {
 						resultExpression += lst.Pop();
@@ -110,8 +110,8 @@ string infixToPostfix() {
 							lst.Push(tmpch);
 							goto nextElem;
 						}
-						it2 = operands.find(lst.Top());
-						if (it2 == operands.end())
+						it2 = operators.find(lst.Top());
+						if (it2 == operators.end())
 							goto nextElem;
 					}
 					if (tmpch > it2->first)
@@ -132,12 +132,12 @@ string infixToPostfix() {
 				i++;
 			}
 			else {
-				it = operands.find(tmpch);
-				while (tmpch != 0 && it == operands.end()) {
+				it = operators.find(tmpch);
+				while (tmpch != 0 && it == operators.end()) {
 					resultExpression += tmpch;
 					i++;
 					tmpch = expression[i + 1];
-					it = operands.find(tmpch);
+					it = operators.find(tmpch);
 				}
 			}
 			resultExpression += " ";
@@ -150,6 +150,8 @@ string infixToPostfix() {
 		resultExpression += lst.Pop();
 		resultExpression += " ";
 	}
+	int gg = resultExpression.length();
+	resultExpression[resultExpression.length() - 1] = 0;
 
 	//replace aliases to functions
 	/*for (iter = functions.begin(); iter != functions.end(); iter++) {
@@ -163,10 +165,9 @@ string infixToPostfix() {
 
 }
 
-string Calculating(string &expr) {
-	ListStack<string> operands;
+double Calculating(string &expr) {
+	ListStack<double> operands;
 	map<string, int> args;
-
 	int j = 0;
 	char help = vars[0];
 	string operand, value;
@@ -203,45 +204,76 @@ string Calculating(string &expr) {
 		j++;
 		help = vars[j];
 	}
+	
+	size_t find;
+	for (int i = 0; expr[i] != 0; i++) {
+		for (auto iter = args.begin(); iter != args.end(); iter++) {
+			find = expr.find(iter->first);
+			if (find != string::npos)
+				expr.replace(find, iter->first.length(), to_string(iter->second));
+		}
+	}
 
 	char ch = expr[0];
-	int i = 0, first, second;
-	string helper, operand1, operand2;
+	char tmpch;
+	int i = 0;
+	double result;
+	string helper;
+	double operand1, operand2;
 
 	while (ch != 0) {
-		helper = "";
-		if (ch >= 'a' && ch <= 'z') {
-			while (ch != ' ' || ch != 0 || ch != '*' || ch != '/' || ch != '+' || ch != '-' || ch != '^') {
-				helper += ch;
-				i++;
-				ch = expr[i];
-			}
-			operands.Push(helper);
-		}
-		if (ch != ' ') {	// Если ch - знак
-			if (operands.IsEmpty() != 0) {
-				operand2 = operands.Pop();
-				operand1 = operands.Pop();
+		while (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^') {
+			/*tmpch = expr[i + 1];
+			if (tmpch >= '0' && tmpch <= '9') {
 
-				vars.find(operand2);
-				//second = ;
-			}
+			}*/
+			if (ch != ' ')
+				operands.Push(atoi(&ch));
 			i++;
 			ch = expr[i];
 		}
-		return operands.Pop();
+		operand2 = operands.Pop();
+		operand1 = operands.Pop();
+		switch (ch) {
+			case '*':
+				result = operand1 * operand2;
+				operands.Push(result);
+				break;
+			case '/':
+				result = operand1 / operand2;
+				operands.Push(result);
+				break;
+			case '+':
+				result = operand1 + operand2;
+				operands.Push(result);
+				break;
+			case '-':
+				result = operand1 - operand2;
+				operands.Push(result);
+				break;
+			case '^':
+				result = pow(operand1, operand2);
+				operands.Push(result);
+				break;
+		}
+		i++;
+		ch = expr[i];
+		
 	}
+	return operands.Pop();
 }
-
+//if (ch != ' ') {	// Если ch - знак
+//	if (operands.IsEmpty() != 0) {
+//		operand2 = operands.Pop();
+//		operand1 = operands.Pop();
 int main() {
 	setlocale(0, "Russian");
 	readFile();
 	string expr = infixToPostfix();
 	cout << expr;
 	cout << endl;
-	
-	string result = Calculating(expr);
-	cout << result;
+	double result = Calculating(expr);
+	cout << setprecision(3) << result;
 	cout << endl;
 
 	system("pause");
