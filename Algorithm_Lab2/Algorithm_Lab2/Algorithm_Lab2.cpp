@@ -152,17 +152,7 @@ string infixToPostfix() {
 	}
 	int gg = resultExpression.length();
 	resultExpression[resultExpression.length() - 1] = 0;
-
-	//replace aliases to functions
-	/*for (iter = functions.begin(); iter != functions.end(); iter++) {
-		find = resultExpression.find(iter->second);
-		if (find != string::npos)
-			resultExpression.replace(find, iter->second.length(), iter->first);
-	}*/
-
-
 	return resultExpression;
-
 }
 
 double Calculating(string &expr) {
@@ -262,10 +252,7 @@ double Calculating(string &expr) {
 	}
 	return operands.Pop();
 }
-//if (ch != ' ') {	// Если ch - знак
-//	if (operands.IsEmpty() != 0) {
-//		operand2 = operands.Pop();
-//		operand1 = operands.Pop();
+
 int main() {
 	setlocale(0, "Russian");
 	readFile();
@@ -275,7 +262,6 @@ int main() {
 	double result = Calculating(expr);
 	cout << setprecision(3) << result;
 	cout << endl;
-
 	system("pause");
 	return 0;
 }
