@@ -32,12 +32,12 @@ void readFile() {
 }
 
 string infixToPostfix() {
-	char ch = expression[0];
 	char tmpch;
 	char tmp;
 	int k = 0;
 	int j = 0;
 	int i = 0;
+	size_t find;
 	bool flag = true;
 	map<char, int> operands;
 	map<char, int>::iterator it;
@@ -66,8 +66,15 @@ string infixToPostfix() {
 	operands.insert(pair<char, int>('*', 3));
 	operands.insert(pair<char, int>('/', 3));
 	operands.insert(pair<char, int>('^', 4));
+
+	//replace functions to aliases
+	/*for (iter = functions.begin(); iter != functions.end(); iter++) {
+		find = expression.find(iter->first);
+		if (find != string::npos)
+			expression.replace(find, iter->first.length(), iter->second);
+	}*/
+	char ch = expression[0];
 	while (ch != 0) {
-		start:
 		it = operands.find(ch);
 		if (it != operands.end()) {
 			if (lst.IsEmpty() == 0)
@@ -99,7 +106,13 @@ string infixToPostfix() {
 					while (it2->first != '(' && it1->second <= it2->second) {
 						resultExpression += lst.Pop();
 						resultExpression += " ";
+						if (lst.IsEmpty() == 0) {
+							lst.Push(tmpch);
+							goto nextElem;
+						}
 						it2 = operands.find(lst.Top());
+						if (it2 == operands.end())
+							goto nextElem;
 					}
 					if (tmpch > it2->first)
 						lst.Push(tmpch);
@@ -107,33 +120,26 @@ string infixToPostfix() {
 			}
 		}
 		else {
-			//j = 0;
-			//switch (ch) {
-			//	case 'a':
-			//		k = i;
-			//		while (expression[k] != '(') {
-			//			arrfunc[j] = expression[k];
-			//			j++;
-			//			k++;
-			//		}
-			//		//for (j = 0; arrfunc[j] != 0; j++)
-			//			//func += arrfunc[j];
-			//		//cout << func << endl;
-			//		//it = operands.find(f);
-			//		break;
-
-			//	default:
-			//		break;
-			//}
 			resultExpression += ch;
 			tmpch = expression[i + 1];
-			it = operands.find(tmpch);
-			while (tmpch != 0 && tmpch != ' ' && it == operands.end()) {
+			if (tmpch == '(') {
+				while (tmpch != ')') {
+
+					resultExpression += tmpch;
+					i++;
+					tmpch = expression[i+1];
+				}
 				resultExpression += tmpch;
 				i++;
-				tmpch = expression[i + 1];
+			}
+			else {
 				it = operands.find(tmpch);
-				
+				while (tmpch != 0 && it == operands.end()) {
+					resultExpression += tmpch;
+					i++;
+					tmpch = expression[i + 1];
+					it = operands.find(tmpch);
+				}
 			}
 			resultExpression += " ";
 		}
@@ -145,6 +151,14 @@ string infixToPostfix() {
 		resultExpression += lst.Pop();
 		resultExpression += " ";
 	}
+
+	//replace aliases to functions
+	/*for (iter = functions.begin(); iter != functions.end(); iter++) {
+		find = resultExpression.find(iter->second);
+		if (find != string::npos)
+			resultExpression.replace(find, iter->second.length(), iter->first);
+	}*/
+
 	return resultExpression;
 }
 
