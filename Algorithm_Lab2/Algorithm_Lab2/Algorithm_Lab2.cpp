@@ -28,11 +28,11 @@ void readFile() {
 		vars += line;
 		vars += "\n";
 	}
+	cout << vars[0];
 	fin.close();
 }
 
 string infixToPostfix() {
-
 	char tmpch;
 	char tmp;
 	int k = 0;
@@ -46,7 +46,6 @@ string infixToPostfix() {
 	map<string, string>::iterator iter;
 	ListStack<char> lst;
 	string resultExpression = "";
-	istringstream istreamexpr;
 	functions.insert(pair<string, string>("sin", "А"));
 	functions.insert(pair<string, string>("cos", "Б"));
 	functions.insert(pair<string, string>("tan", "В"));
@@ -125,7 +124,6 @@ string infixToPostfix() {
 			tmpch = expression[i + 1];
 			if (tmpch == '(') {
 				while (tmpch != ')') {
-
 					resultExpression += tmpch;
 					i++;
 					tmpch = expression[i+1];
@@ -165,33 +163,78 @@ string infixToPostfix() {
 
 }
 
-//string Calculating(string expr){
-//	ListStack<string> operands;
-//
-//	char ch = expr[0];
-//	int i = 0, first, second;
-//	string helper;
-//
-//	while (ch != 0){
-//		helper = "";
-//		if (ch >= 0 && ch <= 9){
-//			while (ch != ' ' || ch != 0 || ch != '*' || ch != '/' || ch != '+' || ch != '-' || ch != '^'){
-//				helper += ch;
-//				i++;
-//				ch = expr[i];
-//			}
-//			operands.Push(helper);
-//		}
-//		else if (ch != ' '){		// Если ch - знак
-//			if (!operands.IsEmpty()){
-//				second = (int)operands.Pop();
-//			}
-//		}
-//		i++;
-//		ch = expr[i];
-//	}
-//	return operands.Pop();
-//}
+string Calculating(string &expr) {
+	ListStack<string> operands;
+	map<string, int> args;
+
+	int j = 0;
+	char help = vars[0];
+	string operand, value;
+	bool flag = false;
+	while (help != 0) {
+		while (help != ' ') {
+			operand += help;
+			j++;
+			help = vars[j];
+		}
+		while (help != '-' && !(help >= '0' && help <= '9')) {
+			j++;
+			help = vars[j];
+		}
+		if (help == '-') {
+			flag = true;
+			j++;
+			help = vars[j];
+		}
+		while (help != '\n') {
+			value += help;
+			j++;
+			help = vars[j];
+		}
+		int number = stoi(value);
+		if (flag) {
+			number *= -1;
+			flag = false;
+		}
+			
+		args.insert(pair<string, int>(operand, number));
+		value = "";
+		operand = "";
+		j++;
+		help = vars[j];
+	}
+	
+	for (auto it = args.begin(); it != args.end(); it++)
+		cout << it->first << " = " << it->second << endl;
+
+	char ch = expr[0];
+	int i = 0, first, second;
+	string helper, operand1, operand2;
+
+	while (ch != 0) {
+		helper = "";
+		if (ch >= 'a' && ch <= 'z') {
+			while (ch != ' ' || ch != 0 || ch != '*' || ch != '/' || ch != '+' || ch != '-' || ch != '^') {
+				helper += ch;
+				i++;
+				ch = expr[i];
+			}
+			operands.Push(helper);
+		}
+		if (ch != ' ') {	// Если ch - знак
+			if (operands.IsEmpty() != 0) {
+				operand2 = operands.Pop();
+				operand1 = operands.Pop();
+
+				vars.find(operand2);
+				//second = ;
+			}
+			i++;
+			ch = expr[i];
+		}
+		return operands.Pop();
+	}
+}
 
 int main() {
 	setlocale(0, "Russian");
@@ -200,8 +243,8 @@ int main() {
 	cout << expr;
 	cout << endl;
 	
-	/*string result = Calculating(expr);
-	cout << result;*/
+	string result = Calculating(expr);
+	cout << result;
 	cout << endl;
 
 	system("pause");
