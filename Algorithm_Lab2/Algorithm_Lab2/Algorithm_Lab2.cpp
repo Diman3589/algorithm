@@ -160,6 +160,7 @@ string infixToPostfix() {
 			resultExpression.replace(find, iter->second.length(), iter->first);
 	}*/
 
+
 	return resultExpression;
 
 }
