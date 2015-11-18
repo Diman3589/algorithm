@@ -163,7 +163,7 @@ string infixToPostfix() {
 	return resultExpression;
 
 }
-
+/*/
 string Calculating(string expr){
 	ListStack<string> operands;
 
@@ -198,10 +198,10 @@ int main() {
 	string expr = infixToPostfix();
 	cout << expr;
 	cout << endl;
-	
+	/*
 	string result = Calculating(expr);
 	cout << result;
-	cout << endl;
+	cout << endl;*/
 
 	system("pause");
 	return 0;
