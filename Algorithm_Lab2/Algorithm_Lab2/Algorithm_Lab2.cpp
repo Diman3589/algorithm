@@ -132,6 +132,7 @@ int main() {
 	string expr = infixToPostfix();
 	cout << expr;
 	cout << endl;
+
 	
 	string result = Calculating(expr);
 	cout << result;
