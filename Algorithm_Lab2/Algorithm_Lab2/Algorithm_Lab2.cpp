@@ -11,10 +11,9 @@
 #include <sstream>
 #include <cmath>
 #include <iomanip> 
+#include <iostream>
 
 #define PI 3.14159265
-
-#include <iostream>
 
 using namespace std;
 
