@@ -160,6 +160,7 @@ string infixToPostfix() {
 	}*/
 
 	return resultExpression;
+
 }
 
 string Calculating(string expr){
