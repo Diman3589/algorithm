@@ -214,19 +214,26 @@ double Calculating(string &expr) {
 
 	while (ch != 0) {
 		while (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^') {
-			/*tmpch = expr[i + 1];
-			if (tmpch >= '0' && tmpch <= '9') {
-
-			}*/
 			if (ch != ' ')
 				helper += ch;
 			else if (helper != ""){
-				operands.Push(stoi(helper));
+				operands.Push(stod(helper));
 				helper = "";
 			}
-
 			i++;
 			ch = expr[i];
+		}
+		if (ch == '-' && expr[i + 1] != ' ') {
+			i++;
+			ch = expr[i];
+			while (ch != ' ') {
+				helper += ch;
+				i++;
+				ch = expr[i];
+			}
+			operands.Push(stod(helper) * (-1));
+			helper = "";
+			goto nextOper;
 		}
 		operand2 = operands.Pop();
 		operand1 = operands.Pop();
@@ -252,6 +259,7 @@ double Calculating(string &expr) {
 				operands.Push(result);
 				break;
 		}
+		nextOper:
 		i++;
 		ch = expr[i];
 		
