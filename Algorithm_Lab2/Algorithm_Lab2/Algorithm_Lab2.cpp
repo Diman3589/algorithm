@@ -161,6 +161,7 @@ double Calculating(string &expr) {
 	char help = vars[0];
 	string operand, value;
 	bool flag = false;
+
 	while (help != 0) {
 		while (help != ' ') {
 			operand += help;
@@ -182,6 +183,7 @@ double Calculating(string &expr) {
 			help = vars[j];
 		}
 		int number = stoi(value);
+
 		if (flag) {
 			number *= -1;
 			flag = false;
@@ -207,22 +209,22 @@ double Calculating(string &expr) {
 	char tmpch;
 	int i = 0;
 	double result;
-	string helper;
-	string number;
+	string helper = "";
 	double operand1, operand2;
 
 	while (ch != 0) {
 		while (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^') {
-			while (ch != ' ' && ch != 0) {
-				number += ch;
-				i++;
-				ch = expr[i];
-				if (ch == ' ') {
-					i--;
-					operands.Push(stod(number));
-					number = " ";
-				}
+			/*tmpch = expr[i + 1];
+			if (tmpch >= '0' && tmpch <= '9') {
+
+			}*/
+			if (ch != ' ')
+				helper += ch;
+			else if (helper != ""){
+				operands.Push(stoi(helper));
+				helper = "";
 			}
+
 			i++;
 			ch = expr[i];
 		}
@@ -254,6 +256,7 @@ double Calculating(string &expr) {
 		ch = expr[i];
 		
 	}
+	cout << "Postfix(numbers): " << expr << endl << endl;
 	return operands.Pop();
 }
 
@@ -261,11 +264,10 @@ int main() {
 	setlocale(0, "Russian");
 	readFile();
 	string expr = infixToPostfix();
-	cout << expr;
-	cout << endl;
+	cout << "Infix: " << expression << endl << endl;
+	cout << "Postifx: " << expr << endl << endl;
 	double result = Calculating(expr);
-	cout << setprecision(10) << result;
-	cout << endl;
+	cout << "Result:"  << setprecision(4) << result << endl << endl;
 	system("pause");
 	return 0;
 }
