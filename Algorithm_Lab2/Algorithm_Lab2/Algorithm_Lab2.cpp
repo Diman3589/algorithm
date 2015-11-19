@@ -275,7 +275,7 @@ int main() {
 	cout << "Infix: " << expression << endl << endl;
 	cout << "Postifx: " << expr << endl << endl;
 	double result = Calculating(expr);
-	cout << "Result:"  << setprecision(4) << result << endl << endl;
+	cout << "Result: " << setprecision(10) << result << endl << endl;
 	system("pause");
 	return 0;
 }
