@@ -149,7 +149,6 @@ string infixToPostfix() {
 		resultExpression += lst.Pop();
 		resultExpression += " ";
 	}
-	int gg = resultExpression.length();
 	resultExpression[resultExpression.length() - 1] = 0;
 	return resultExpression;
 }

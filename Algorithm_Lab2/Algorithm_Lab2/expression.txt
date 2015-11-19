@@ -1,4 +1,4 @@
-(kar+ra*malak)/(kek+police*go-to)^you
+(kar+ra*malak)/(kek+police*go-to)^You
 kar = 8
 ra = 2
 malak = 5
@@ -6,4 +6,4 @@ kek = 1
 police = 3
 go = 2
 to = 4
-you = 2
+You = 2
