@@ -161,6 +161,7 @@ double Calculating(string &expr) {
 	char help = vars[0];
 	string operand, value;
 	bool flag = false;
+
 	while (help != 0) {
 		while (help != ' ') {
 			operand += help;
@@ -182,6 +183,7 @@ double Calculating(string &expr) {
 			help = vars[j];
 		}
 		int number = stoi(value);
+
 		if (flag) {
 			number *= -1;
 			flag = false;
@@ -207,7 +209,7 @@ double Calculating(string &expr) {
 	char tmpch;
 	int i = 0;
 	double result;
-	string helper;
+	string helper = "";
 	double operand1, operand2;
 
 	while (ch != 0) {
@@ -217,7 +219,12 @@ double Calculating(string &expr) {
 
 			}*/
 			if (ch != ' ')
-				operands.Push(atoi(&ch));
+				helper += ch;
+			else if (helper != ""){
+				operands.Push(stoi(helper));
+				helper = "";
+			}
+
 			i++;
 			ch = expr[i];
 		}
@@ -259,8 +266,8 @@ int main() {
 	cout << expr;
 	cout << endl;
 	double result = Calculating(expr);
-	cout << setprecision(3) << result;
-	cout << endl;
+	cout << setprecision(3) << result << endl;
+
 	system("pause");
 	return 0;
 }
