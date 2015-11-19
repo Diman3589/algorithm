@@ -208,16 +208,21 @@ double Calculating(string &expr) {
 	int i = 0;
 	double result;
 	string helper;
+	string number;
 	double operand1, operand2;
 
 	while (ch != 0) {
 		while (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^') {
-			/*tmpch = expr[i + 1];
-			if (tmpch >= '0' && tmpch <= '9') {
-
-			}*/
-			if (ch != ' ')
-				operands.Push(atoi(&ch));
+			while (ch != ' ' && ch != 0) {
+				number += ch;
+				i++;
+				ch = expr[i];
+				if (ch == ' ') {
+					i--;
+					operands.Push(stod(number));
+					number = " ";
+				}
+			}
 			i++;
 			ch = expr[i];
 		}
@@ -259,7 +264,7 @@ int main() {
 	cout << expr;
 	cout << endl;
 	double result = Calculating(expr);
-	cout << setprecision(3) << result;
+	cout << setprecision(10) << result;
 	cout << endl;
 	system("pause");
 	return 0;
