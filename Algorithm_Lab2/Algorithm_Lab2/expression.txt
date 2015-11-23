@@ -1,6 +1,6 @@
-(kar+ra*malak)/(kek+police*go-to)^You
-kar = 8
-ra = 2
+(sin(kar+ra)^3+tan(ra)*malak)/(kek+police*go-to)^You
+kar = 15
+ra = 30
 malak = 5
 kek = 1
 police = 3
