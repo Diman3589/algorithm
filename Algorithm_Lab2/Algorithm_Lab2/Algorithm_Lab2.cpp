@@ -95,6 +95,8 @@ string infixToPostfix() {
 
 	operators.insert(pair<char, int>('(', 1));
 	operators.insert(pair<char, int>(')', 1));
+	operators.insert(pair<char, int>('[', 1));
+	operators.insert(pair<char, int>(']', 1));
 	operators.insert(pair<char, int>('-', 2));
 	operators.insert(pair<char, int>('+', 2));
 	operators.insert(pair<char, int>('*', 3));
@@ -121,15 +123,21 @@ string infixToPostfix() {
 				goto nextElem;
 			}
 			else if (it->second <= operators.find(lst.Top())->second) {
-				if (it->first == '(')
+				// array
+				if (it->first == '(' || it->first == '[')
 					lst.Push(ch);
-				if (it->first == ')') {
-					tmp = lst.Pop();
-					while (tmp != '(' && tmp != '\0') {
+				if (it->first == ')' || it->first == ']') {
+					/*if (it->first == ']')
+						resultExpression += it->first;
+					else*/
+						tmp = lst.Pop();
+					while (/*(*/tmp != '(' /*|| tmp != '[')*/ && tmp != '\0') {
 						resultExpression += tmp;
 						resultExpression += " ";
 						tmp = lst.Pop();
 					}
+					/*if (tmp == '[')
+						resultExpression += tmp;*/
 					if (!func.empty()) {
 						resultExpression += func;
 						func = "";
@@ -150,7 +158,8 @@ string infixToPostfix() {
 						if (it2 == operators.end())
 							goto nextElem;
 					}
-					if (tmpch > it2->first)
+					auto it3 = operators.find(tmpch);
+					if (it3->second > it2->second)
 						lst.Push(tmpch);
 				}
 			}
@@ -168,6 +177,7 @@ string infixToPostfix() {
 				}
 			}
 			tmpStr.pop_back();
+			// if length of operand more than a one character
 			resultExpression += ch;
 			it = operators.find(tmpch);
 			while (tmpch != 0 && it == operators.end()) {
@@ -204,6 +214,7 @@ string infixToPostfix() {
 	return resultExpression;
 }
 
+// Calculating postfix epxression
 double Calculating(string &expr) {
 	ListStack<double> operands;
 	map<string, double> args;
@@ -221,6 +232,7 @@ double Calculating(string &expr) {
 	string charToStr;
 	string helper = "";
 	double operand1, operand2;
+	size_t find;
 
 	// convert arguments to numbers
 	while (help != 0) {
@@ -260,7 +272,6 @@ double Calculating(string &expr) {
 	}
 
 	// substitution numbers to expression
-	size_t find;
 	for (int i = 0; expr[i] != 0; i++) {
 		for (auto iter = args.begin(); iter != args.end(); iter++) {
 			find = expr.find(iter->first);
@@ -291,7 +302,7 @@ double Calculating(string &expr) {
 			i++;
 			ch = expr[i];
 		}
-		if (ch == '-' && expr[i + 1] != ' ') {
+		if (ch == '-' && expr[i + 1] != ' ' && expr[i + 1] != 0) {
 			i++;
 			ch = expr[i];
 			while (ch != ' ') {
