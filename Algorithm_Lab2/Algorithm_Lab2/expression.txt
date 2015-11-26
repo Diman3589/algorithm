@@ -1,3 +1,11 @@
+a+c-
+(a+b))
+a+b+c
+a = 3
+b = 4
+c not initialized
+arr[3.4]
+
 (sin(kar+ra)^3+tan(ra)*malak)/(kek+police*go-to)^You
 kar = 15
 ra = 30
@@ -7,3 +15,25 @@ police = 3
 go = 2
 to = 4
 You = 2
+
+kar ra + A
+sin(ln(d-cos(f)))
+
+s*g^k-j
+
+arr[i+j]
+arr i j + []
+
+s g k ^ * j -
+s = -5
+g = 4
+k = 1
+j = 100500.5
+
+m  = 7
+m[] = 8 45 
+
+m a []
+
+replace arguments to numbers till calculation
+
