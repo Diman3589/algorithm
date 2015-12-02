@@ -326,6 +326,7 @@ double Calculating(string &expr) {
 				while (ch != ' ' && ch != 0) {
 					if (ch == '[' && !arr.empty()) {
 						replace = ReplaceToNumbers(arr+"[]", args, operands.Pop());
+						replace = ReplaceDotsToCommas(replace);
 						operands.Push(stod(replace));
 						arr = "";
 						i += 2;
@@ -346,12 +347,14 @@ double Calculating(string &expr) {
 				if (helper == "" || helper.empty())
 					goto nextOper;
 				replace = ReplaceToNumbers(helper, args);
+				replace = ReplaceDotsToCommas(replace);
 				operands.Push(stod(replace));
 				helper = "";
 			if (ch != ' ')
 				helper += ch;
 			else if (helper != "") {
 					replace = ReplaceToNumbers(helper, args);
+					replace = ReplaceDotsToCommas(replace);
 					operands.Push(stod(replace));
 					helper = "";
 				}
