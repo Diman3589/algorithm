@@ -55,6 +55,34 @@ string ReplaceDotsToCommas(string &value) {
 	return value;
 }
 
+// substitution numbers to expression
+string ReplaceToNumbers(string &str, map<string, vector<double>> &args, int index = 0) {
+	auto it = args.find(str);
+	if (it != args.end()) {
+		str = to_string(it->second[index]);
+		return str;
+	}
+	string value;
+	cout << endl << "You should enter a value for " << str << ": ";
+	cin >> value;
+	args[str].push_back(stod(value));
+	return value;
+}
+
+int ValidateExpression() {
+	int count1 = 0;
+	int count2 = 0;
+	for (int i = 0; expression[i] != 0; i++) {
+		if (expression[i] == '(')
+			count1++;
+		if (expression[i] == ')')
+			count2++;
+	}
+	if (count1 != count2)
+		return 1;
+	return 0;
+}
+
 void readFile() {
 	ifstream fin("expression.txt", ifstream::in);
 	string line;
@@ -69,16 +97,17 @@ void readFile() {
 string infixToPostfix() {
 	char tmpch;
 	char tmp;
+	char bracket;
 	int k = 0;
 	int j = 0;
 	int i = 0;
 	string tmpStr;
-	string func;
+	ListStack<string> func;
 	bool flag = true;
 	map<char, int> operators;
 	map<char, int>::iterator it;
 	map<string, string>::iterator iter;
-	ListStack<char> lst;
+	ListStack<char> list;
 	string resultExpression = "";
 	functions.insert(pair<string, string>("sin", "À"));
 	functions.insert(pair<string, string>("cos", "Á"));
@@ -110,57 +139,62 @@ string infixToPostfix() {
 	check:
 		it = operators.find(ch);
 		if (it != operators.end()) {
-			if (lst.IsEmpty() == 0)
+			if (list.IsEmpty() == 0)
 				flag = true;
 			if (flag) {
-				lst.Push(ch);
+				list.Push(ch);
 				flag = false;
 				goto nextElem;
 			}
 			
-			if (it->second > operators.find(lst.Top())->second) {
-				lst.Push(ch);
+			if (it->second > operators.find(list.Top())->second) {
+				list.Push(ch);
 				goto nextElem;
 			}
-			else if (it->second <= operators.find(lst.Top())->second) {
+			else if (it->second <= operators.find(list.Top())->second) {
 				// array
 				if (it->first == '(' || it->first == '[')
-					lst.Push(ch);
+					list.Push(ch);
 				if (it->first == ')' || it->first == ']') {
-					/*if (it->first == ']')
-						resultExpression += it->first;
-					else*/
-						tmp = lst.Pop();
-					while (/*(*/tmp != '(' /*|| tmp != '[')*/ && tmp != '\0') {
+					if (it->first == ']')
+						bracket = ch;
+						//resultExpression += it->first;
+					//else
+						tmp = list.Pop();
+					while (tmp != '(' && tmp != '[' && tmp != '\0') {
 						resultExpression += tmp;
 						resultExpression += " ";
-						tmp = lst.Pop();
+						tmp = list.Pop();
+						if (tmp == '[') {
+							resultExpression += tmp;
+							resultExpression += bracket;
+							resultExpression += " ";
+						}
 					}
 					/*if (tmp == '[')
 						resultExpression += tmp;*/
-					if (!func.empty()) {
-						resultExpression += func;
-						func = "";
+					if (func.IsEmpty() != 0) {
+						resultExpression += func.Pop();
 					}
 				}
 				else {
 					auto it1 = operators.find(ch);
-					auto it2 = operators.find(lst.Top());
+					auto it2 = operators.find(list.Top());
 					tmpch = ch;
-					while (it2->first != '(' && it1->second <= it2->second) {
-						resultExpression += lst.Pop();
+					while (it2->first != '(' && it2->first != '[' && it1->second <= it2->second) {
+						resultExpression += list.Pop();
 						resultExpression += " ";
-						if (lst.IsEmpty() == 0) {
-							lst.Push(tmpch);
+						if (list.IsEmpty() == 0) {
+							list.Push(tmpch);
 							goto nextElem;
 						}
-						it2 = operators.find(lst.Top());
+						it2 = operators.find(list.Top());
 						if (it2 == operators.end())
 							goto nextElem;
 					}
 					auto it3 = operators.find(tmpch);
 					if (it3->second > it2->second)
-						lst.Push(tmpch);
+						list.Push(tmpch);
 				}
 			}
 		}
@@ -169,7 +203,7 @@ string infixToPostfix() {
 			tmpch = expression[i + 1];
 			for (auto iter = functions.begin(); iter != functions.end(); iter++) {
 				if (iter->second == tmpStr) {
- 					func = iter->second;
+ 					func.Push(iter->second);
 					i++;
 					ch = expression[i];
 					tmpStr.pop_back();
@@ -177,6 +211,7 @@ string infixToPostfix() {
 				}
 			}
 			tmpStr.pop_back();
+
 			// if length of operand more than a one character
 			resultExpression += ch;
 			it = operators.find(tmpch);
@@ -186,14 +221,16 @@ string infixToPostfix() {
 				tmpch = expression[i + 1];
 				it = operators.find(tmpch);
 			}
+			if (tmpch == '[')
+				resultExpression += "&";
 		}
 			resultExpression += " ";
 	nextElem:
 		i++;
 		ch = expression[i];
 	}
-	while (lst.IsEmpty() != 0) {
-		resultExpression += lst.Pop();
+	while (list.IsEmpty() != 0) {
+		resultExpression += list.Pop();
 		resultExpression += " ";
 	}
 
@@ -217,12 +254,11 @@ string infixToPostfix() {
 // Calculating postfix epxression
 double Calculating(string &expr) {
 	ListStack<double> operands;
-	map<string, double> args;
+	map<string, vector<double>> args;
 	int j = 0;
 	char help = vars[0];
 	string operand, value;
 	bool flag = false;
-	double number;
 	char ch;
 	char tmpch;
 	int i = 0;
@@ -231,10 +267,11 @@ double Calculating(string &expr) {
 	string operandStr1;
 	string charToStr;
 	string helper = "";
+	string replace;
+	string arr;
 	double operand1, operand2;
-	size_t find;
-
-	// convert arguments to numbers
+	
+	// Parsing arguments...
 	while (help != 0) {
 		while (help != ' ') {
 			operand += help;
@@ -245,82 +282,88 @@ double Calculating(string &expr) {
 			j++;
 			help = vars[j];
 		}
-		if (help == '-') {
-			flag = true;
-			j++;
-			help = vars[j];
-		}
 		while (help != '\n') {
-			value += help;
-			j++;
-			help = vars[j];
+			if (help == '-') {
+				getMinusNumber:
+				j++;
+				help = vars[j];
+				while (help != ' ' && help != '\n') {
+					value += help;
+					j++;
+					help = vars[j];
+				}
+				value = ReplaceDotsToCommas(value);
+				args[operand].push_back(stod(value) * -1);
+				value = "";
+			}
+			while (help != '\n') {
+				if (help == ' ') {
+					j++;
+					help = vars[j];
+				}
+				while (help != ' ' && help != '\n') {
+					if (help == '-')
+						goto getMinusNumber;
+					value += help;
+					j++;
+					help = vars[j];
+				}
+				value = ReplaceDotsToCommas(value);
+				args[operand].push_back(stod(value));
+				value = "";
+			}
 		}
-
-		value = ReplaceDotsToCommas(value);
-		number = stod(value);
-
-		if (flag) {
-			number *= -1;
-			flag = false;
-		}
-	
-		args.insert(pair<string, double>(operand, number));
 		value = "";
 		operand = "";
 		j++;
 		help = vars[j];
 	}
 
-	// substitution numbers to expression
-	for (int i = 0; expr[i] != 0; i++) {
-		for (auto iter = args.begin(); iter != args.end(); iter++) {
-			find = expr.find(iter->first);
-			if (find != string::npos)
-				expr.replace(find, iter->first.length(), to_string(iter->second));
-		}
-	}
-
-	expr = ReplaceDotsToCommas(expr);
+	// Calculating...
 	ch = expr[0];
 	while (ch != 0) {
 		while (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^' && (ch < -64 || ch > -52)) {
-			if (ch == ',') {
-				while (ch != ' ') {
+				while (ch != ' ' && ch != 0) {
+					if (ch == '[' && !arr.empty()) {
+						replace = ReplaceToNumbers(arr+"[]", args, operands.Pop());
+						operands.Push(stod(replace));
+						arr = "";
+						i += 2;
+						ch = expr[i];
+						goto nextOper;
+					}
 					helper += ch;
 					i++;
 					ch = expr[i];
+					if (ch == '&') {
+						arr = helper;
+						helper = "";
+						i++;
+						ch = expr[i];
+					}
+					
 				}
-				operands.Push(stod(helper));
+				if (helper == "" || helper.empty())
+					goto nextOper;
+				replace = ReplaceToNumbers(helper, args);
+				operands.Push(stod(replace));
 				helper = "";
-			}
 			if (ch != ' ')
 				helper += ch;
-			else if (helper != ""){
-				operands.Push(stod(helper));
-				helper = "";
-			}
+			else if (helper != "") {
+					replace = ReplaceToNumbers(helper, args);
+					operands.Push(stod(replace));
+					helper = "";
+				}
 			i++;
 			ch = expr[i];
-		}
-		if (ch == '-' && expr[i + 1] != ' ' && expr[i + 1] != 0) {
-			i++;
-			ch = expr[i];
-			while (ch != ' ') {
-				helper += ch;
-				i++;
-				ch = expr[i];
-			}
-			operands.Push(stod(helper) * (-1));
-			helper = "";
-			goto nextOper;
 		}
 		tmpStr.push_back(ch);
 		for (auto iter = functions.begin(); iter != functions.end(); iter++) {
-			if (iter->second == tmpStr) {
+			if ( iter->second == tmpStr) {
 				operand2 = operands.Pop();
 				goto calculate;
 			}
-			else break;
 		}
 		operand2 = operands.Pop();
 		operand1 = operands.Pop();
@@ -399,18 +442,24 @@ double Calculating(string &expr) {
 		nextOper:
 			i++;
 			ch = expr[i];
-		
 	}
-	expr = FromAliasesToFunctions(expr);
-	cout << "Postfix(numbers): " << expr << endl << endl;
+
+	size_t find;
 	return operands.Pop();
 }
 
 int main() {
 	setlocale(0, "Russian");
 	readFile();
-	string expr = infixToPostfix();
+	int check;
+	check = ValidateExpression();
+	if (check == 1) {
+		cout << "Error in brackets!" << endl;
+		system("pause");
+		return 0;
+	}
 	cout << "Infix: " << expression << endl << endl;
+	string expr = infixToPostfix();
 	cout << "Postifx: " << resExpression << endl << endl;
 	double result = Calculating(expr);
 	cout << "Result: " << setprecision(4) << result << endl << endl;
