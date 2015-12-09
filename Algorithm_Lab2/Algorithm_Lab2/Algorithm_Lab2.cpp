@@ -12,7 +12,7 @@
 #include <cmath>
 #include <iomanip> 
 #include <iostream>
-
+#include <algorithm> 
 
 #define PI 3.14159265
 
@@ -58,7 +58,14 @@ string ReplaceDotsToCommas(string &value) {
 // substitution numbers to expression
 string ReplaceToNumbers(string &str, map<string, vector<double>> &args, int index = 0) {
 	auto it = args.find(str);
+	int size;
 	if (it != args.end()) {
+		size = it->second.size();
+		while (index > size - 1) {
+			cout << "This element of array doesn't exist!" << endl;
+			cout << "Please enter correct index for array: ";
+			cin >> index;
+		}
 		str = to_string(it->second[index]);
 		return str;
 	}
@@ -139,7 +146,7 @@ string infixToPostfix() {
 	check:
 		it = operators.find(ch);
 		if (it != operators.end()) {
-			if (list.IsEmpty() == 0)
+			if (list.IsEmpty())
 				flag = true;
 			if (flag) {
 				list.Push(ch);
@@ -161,19 +168,22 @@ string infixToPostfix() {
 						//resultExpression += it->first;
 					//else
 						tmp = list.Pop();
-					while (tmp != '(' && tmp != '[' && tmp != '\0') {
-						resultExpression += tmp;
-						resultExpression += " ";
-						tmp = list.Pop();
+					while (tmp != '(' && tmp != '\0') {
 						if (tmp == '[') {
 							resultExpression += tmp;
 							resultExpression += bracket;
 							resultExpression += " ";
+							break;
 						}
+						else {
+							resultExpression += tmp;
+							resultExpression += " ";
+						}
+						tmp = list.Pop();
 					}
 					/*if (tmp == '[')
 						resultExpression += tmp;*/
-					if (func.IsEmpty() != 0) {
+					if (!func.IsEmpty()) {
 						resultExpression += func.Pop();
 					}
 				}
@@ -184,7 +194,7 @@ string infixToPostfix() {
 					while (it2->first != '(' && it2->first != '[' && it1->second <= it2->second) {
 						resultExpression += list.Pop();
 						resultExpression += " ";
-						if (list.IsEmpty() == 0) {
+						if (list.IsEmpty()) {
 							list.Push(tmpch);
 							goto nextElem;
 						}
@@ -229,7 +239,7 @@ string infixToPostfix() {
 		i++;
 		ch = expression[i];
 	}
-	while (list.IsEmpty() != 0) {
+	while (!list.IsEmpty()) {
 		resultExpression += list.Pop();
 		resultExpression += " ";
 	}
@@ -248,6 +258,7 @@ string infixToPostfix() {
 	// replace aliases to functions
 	resExpression = resultExpression;
 	resExpression = FromAliasesToFunctions(resExpression);
+	resExpression.erase(remove(resExpression.begin(), resExpression.end(), '&'), resExpression.end());
 	return resultExpression;
 }
 
@@ -268,7 +279,7 @@ double Calculating(string &expr) {
 	string charToStr;
 	string helper = "";
 	string replace;
-	string arr;
+	ListStack<string> arr;
 	double operand1, operand2;
 	
 	// Parsing arguments...
@@ -324,20 +335,21 @@ double Calculating(string &expr) {
 	while (ch != 0) {
 		while (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^' && (ch < -64 || ch > -52)) {
 				while (ch != ' ' && ch != 0) {
-					if (ch == '[' && !arr.empty()) {
-						replace = ReplaceToNumbers(arr+"[]", args, operands.Pop());
+					if (ch == '[' && !arr.IsEmpty()) {
+						replace = ReplaceToNumbers(arr.Pop()+"[]", args, operands.Pop());
 						replace = ReplaceDotsToCommas(replace);
 						operands.Push(stod(replace));
-						arr = "";
+						/*if (!arr.IsEmpty()) 
+							arr.Pop();*/
 						i += 2;
 						ch = expr[i];
-						goto nextOper;
+						goto nextOper; 
 					}
 					helper += ch;
 					i++;
 					ch = expr[i];
 					if (ch == '&') {
-						arr = helper;
+						arr.Push(helper);
 						helper = "";
 						i++;
 						ch = expr[i];

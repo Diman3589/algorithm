@@ -8,7 +8,7 @@ class ArrayStack : public Stack<TElement> {
 public:
 	TElement Pop();
 	int Push(TElement elem);
-	int IsEmpty();
+	bool IsEmpty();
 	TElement Top();
 private:
 	void outInFile();
@@ -62,7 +62,7 @@ int ArrayStack<TElement>::Push(TElement elem) {
 }
 
 template <typename TElement>
-int ArrayStack<TElement>::IsEmpty() {
+bool ArrayStack<TElement>::IsEmpty() {
 	if (top == -1)
 		return true;
 	return false;

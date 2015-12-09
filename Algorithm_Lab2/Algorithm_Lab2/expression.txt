@@ -1,7 +1,5 @@
-sin(arr[i*j])^z+array[k+t]
-i = 2
-j = 1
-k = 0
-t = 1
-arr[] = 15 45 45 3
-array[] = 10 20.65 30
+arr[mass]
+i = 1
+mass[] = 1 3 4
+mass = 1
+arr[] = 2 -10 -8
