@@ -1,7 +1,4 @@
-(a+b)*c-d/(a+c)
-a = 3
-b = 2
-c = 4
-d = -5
-e = 6
-c2 = 3
+(aasdf+bas)*cer-bas/(aasdf+cer)
+aasdf = 3
+bas = 2
+cer = 4
