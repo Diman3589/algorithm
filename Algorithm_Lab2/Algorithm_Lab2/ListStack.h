@@ -20,7 +20,7 @@ class ListStack : public Stack<TElement> {
 public:
 	TElement Pop();
 	int Push(TElement elem);
-	int IsEmpty();
+	bool IsEmpty();
 	TElement Top();
 private:
 	void outInFile();
@@ -71,10 +71,10 @@ TElement ListStack<TElement>::Pop() {
 }
 
 template <typename TElement>
-int ListStack<TElement>::IsEmpty() {
+bool ListStack<TElement>::IsEmpty() {
 	if (head == NULL)
-		return 0;
-	return 1;
+		return true;
+	return false;
 }
 
 template <typename TElement>

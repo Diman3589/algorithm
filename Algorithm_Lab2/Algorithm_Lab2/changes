@@ -12,7 +12,7 @@
 #include <cmath>
 #include <iomanip> 
 #include <iostream>
-#include <algorithm> 
+
 
 #define PI 3.14159265
 
@@ -61,10 +61,9 @@ string ReplaceToNumbers(string &str, map<string, vector<double>> &args, int inde
 	int size;
 	if (it != args.end()) {
 		size = it->second.size();
-		while (index > size - 1) {
-			cout << "This element of array doesn't exist!" << endl;
-			cout << "Please enter correct index for array: ";
-			cin >> index;
+		if (index > size - 1) {
+			cout << "This element of stack doesn't exist!" << endl;
+			//goto exit;
 		}
 		str = to_string(it->second[index]);
 		return str;
@@ -116,18 +115,18 @@ string infixToPostfix() {
 	map<string, string>::iterator iter;
 	ListStack<char> list;
 	string resultExpression = "";
-	functions.insert(pair<string, string>("sin", "¿"));
-	functions.insert(pair<string, string>("cos", "¡"));
-	functions.insert(pair<string, string>("tan", "¬"));
-	functions.insert(pair<string, string>("cot", "√"));
-	functions.insert(pair<string, string>("asin", "ƒ"));
-	functions.insert(pair<string, string>("acos", "≈"));
-	functions.insert(pair<string, string>("atan", "∆"));
-	functions.insert(pair<string, string>("actg", "«"));
-	functions.insert(pair<string, string>("exp", "»"));
-	functions.insert(pair<string, string>("ln", " "));
-	functions.insert(pair<string, string>("sqrt", "À"));
-	functions.insert(pair<string, string>("sqr3", "Ã"));
+	functions.insert(pair<string, string>("sin", "–ê"));
+	functions.insert(pair<string, string>("cos", "–ë"));
+	functions.insert(pair<string, string>("tan", "–í"));
+	functions.insert(pair<string, string>("cot", "–ì"));
+	functions.insert(pair<string, string>("asin", "–î"));
+	functions.insert(pair<string, string>("acos", "–ï"));
+	functions.insert(pair<string, string>("atan", "–ñ"));
+	functions.insert(pair<string, string>("actg", "–ó"));
+	functions.insert(pair<string, string>("exp", "–ò"));
+	functions.insert(pair<string, string>("ln", "–ö"));
+	functions.insert(pair<string, string>("sqrt", "–õ"));
+	functions.insert(pair<string, string>("sqr3", "–ú"));
 
 	operators.insert(pair<char, int>('(', 1));
 	operators.insert(pair<char, int>(')', 1));
@@ -146,7 +145,7 @@ string infixToPostfix() {
 	check:
 		it = operators.find(ch);
 		if (it != operators.end()) {
-			if (list.IsEmpty())
+			if (list.IsEmpty() == 0)
 				flag = true;
 			if (flag) {
 				list.Push(ch);
@@ -168,22 +167,19 @@ string infixToPostfix() {
 						//resultExpression += it->first;
 					//else
 						tmp = list.Pop();
-					while (tmp != '(' && tmp != '\0') {
+					while (tmp != '(' && tmp != '[' && tmp != '\0') {
+						resultExpression += tmp;
+						resultExpression += " ";
+						tmp = list.Pop();
 						if (tmp == '[') {
 							resultExpression += tmp;
 							resultExpression += bracket;
 							resultExpression += " ";
-							break;
 						}
-						else {
-							resultExpression += tmp;
-							resultExpression += " ";
-						}
-						tmp = list.Pop();
 					}
 					/*if (tmp == '[')
 						resultExpression += tmp;*/
-					if (!func.IsEmpty()) {
+					if (func.IsEmpty() != 0) {
 						resultExpression += func.Pop();
 					}
 				}
@@ -194,7 +190,7 @@ string infixToPostfix() {
 					while (it2->first != '(' && it2->first != '[' && it1->second <= it2->second) {
 						resultExpression += list.Pop();
 						resultExpression += " ";
-						if (list.IsEmpty()) {
+						if (list.IsEmpty() == 0) {
 							list.Push(tmpch);
 							goto nextElem;
 						}
@@ -239,7 +235,7 @@ string infixToPostfix() {
 		i++;
 		ch = expression[i];
 	}
-	while (!list.IsEmpty()) {
+	while (list.IsEmpty() != 0) {
 		resultExpression += list.Pop();
 		resultExpression += " ";
 	}
@@ -258,7 +254,6 @@ string infixToPostfix() {
 	// replace aliases to functions
 	resExpression = resultExpression;
 	resExpression = FromAliasesToFunctions(resExpression);
-	resExpression.erase(remove(resExpression.begin(), resExpression.end(), '&'), resExpression.end());
 	return resultExpression;
 }
 
@@ -267,19 +262,20 @@ double Calculating(string &expr) {
 	ListStack<double> operands;
 	map<string, vector<double>> args;
 	int j = 0;
+	int i = 0;
 	char help = vars[0];
 	string operand, value;
 	bool flag = false;
 	char ch;
 	char tmpch;
-	int i = 0;
+	int k = 0;
 	double result;
 	string tmpStr;
 	string operandStr1;
 	string charToStr;
 	string helper = "";
 	string replace;
-	ListStack<string> arr;
+	string arr;
 	double operand1, operand2;
 	
 	// Parsing arguments...
@@ -289,13 +285,14 @@ double Calculating(string &expr) {
 			j++;
 			help = vars[j];
 		}
-		while (help != '-' && !(help >= '0' && help <= '9')) {
+		
+		while (/*help != '-' && */!(help >= '0' && help <= '9')) {
 			j++;
 			help = vars[j];
 		}
 		while (help != '\n') {
 			if (help == '-') {
-				getMinusNumber:
+			getMinusNumber:
 				j++;
 				help = vars[j];
 				while (help != ' ' && help != '\n') {
@@ -334,42 +331,33 @@ double Calculating(string &expr) {
 	ch = expr[0];
 	while (ch != 0) {
 		while (ch != '*' && ch != '/' && ch != '+' && ch != '-' && ch != '^' && (ch < -64 || ch > -52)) {
-				while (ch != ' ' && ch != 0) {
-					if (ch == '[' && !arr.IsEmpty()) {
-						replace = ReplaceToNumbers(arr.Pop()+"[]", args, operands.Pop());
-						replace = ReplaceDotsToCommas(replace);
-						operands.Push(stod(replace));
-						/*if (!arr.IsEmpty()) 
-							arr.Pop();*/
-						i += 2;
-						ch = expr[i];
-						goto nextOper; 
-					}
-					helper += ch;
-					i++;
-					ch = expr[i];
-					if (ch == '&') {
-						arr.Push(helper);
-						helper = "";
-						i++;
-						ch = expr[i];
-					}
-					
-				}
-				if (helper == "" || helper.empty())
-					goto nextOper;
-				replace = ReplaceToNumbers(helper, args);
-				replace = ReplaceDotsToCommas(replace);
-				operands.Push(stod(replace));
-				helper = "";
-			if (ch != ' ')
-				helper += ch;
-			else if (helper != "") {
-					replace = ReplaceToNumbers(helper, args);
+			while (ch != ' ' && ch != 0) {
+				if (ch == '[' && !arr.empty()) {
+					replace = ReplaceToNumbers(arr+"[]", args, operands.Pop());
 					replace = ReplaceDotsToCommas(replace);
 					operands.Push(stod(replace));
-					helper = "";
+					arr = "";
+					i += 2;
+					ch = expr[i];
+					goto nextOper;
 				}
+				helper += ch;
+				i++;
+				ch = expr[i];
+				if (ch == '&') {
+					arr = helper;
+					helper = "";
+					i++;
+					ch = expr[i];
+				}
+					
+			}
+			if (helper == "" || helper.empty())
+				goto nextOper;
+			replace = ReplaceToNumbers(helper, args);
+			replace = ReplaceDotsToCommas(replace);
+			operands.Push(stod(replace));
+			helper = "";
 			i++;
 			ch = expr[i];
 		}
@@ -405,51 +393,51 @@ double Calculating(string &expr) {
 					result = pow(operand1, operand2);
 					operands.Push(result);
 					break;
-				case '¿':
+				case '–ê':
 					result = sin(operand2 * PI / 180);
 					operands.Push(result);
 					break;
-				case '¡':
+				case '–ë':
 					result = cos(operand2 * PI / 180);
 					operands.Push(result);
 					break;
-				case '¬':
+				case '–í':
 					result = tan(operand2 * PI / 180);
 					operands.Push(result);
 					break;
-				case '√':
+				case '–ì':
 					result = 1 / tan(operand2 * PI / 180);
 					operands.Push(result);
 					break;
-				case 'ƒ':
+				case '–î':
  					result = asin(operand2) * 180.0 / PI;
 					operands.Push(result);
 					break;
-				case '≈':
+				case '–ï':
 					result = acos(operand2) * 180.0 / PI;
 					operands.Push(result);
 					break;
-				case '∆':
+				case '–ñ':
 					result = atan(operand2) * 180.0 / PI;
 					operands.Push(result);
 					break;
-				case '«':
+				case '–ó':
 					result = 1 / atan(operand2) * 180.0 / PI;
 					operands.Push(result);
 					break;
-				case '»':
+				case '–ò':
 					result = exp(operand2 * PI / 180);
 					operands.Push(result);
 					break;
-				case ' ':
+				case '–ö':
 					result = log(operand2);
 					operands.Push(result);
 					break;
-				case 'À':
+				case '–õ':
 					result = sqrt(operand2);
 					operands.Push(result);
 					break;
-				case 'Ã':
+				case '–ú':
 					result = cbrt(operand2);
 					operands.Push(result);
 					break;
@@ -478,6 +466,7 @@ int main() {
 	cout << "Postifx: " << resExpression << endl << endl;
 	double result = Calculating(expr);
 	cout << "Result: " << setprecision(4) << result << endl << endl;
+	exit:
 	system("pause");
 	return 0;
 }
