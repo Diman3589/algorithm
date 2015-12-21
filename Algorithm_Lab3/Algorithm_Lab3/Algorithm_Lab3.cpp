@@ -2,58 +2,52 @@
 //
 
 #include "stdafx.h"
+#include "Tree.h"
 #include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
+#include <algorithm>
+#include <boost/bind.hpp>
 
 using namespace std;
 
-struct Data {
-	int key;
-	bool colour;
-};
-
-struct Vertex {		//вершина
-	Data data;
-	Vertex* left;
-	Vertex* right;
-};
-
-string readFile() {
-	ifstream fin("aboutTree.txt", ifstream::in);
-	string line;
-	string content;
-
-	while (getline(fin, line)) {
-		content += line;
-		content += "\n";
-	}
-	fin.close();
-	return content;
-}
 
 
 int main() {
-	vector<Vertex> listTree;
-	Vertex v;// = new Vertex;
-	Vertex v1;// = new Vertex;
-	Vertex v2;// = new Vertex;
+	Tree *tree = new Tree();
+	tree->FillTree();
+	tree->ShowTree();
+	/*auto it = find_if(vect->begin(), vect->end(),
+		boost::bind(&Data::key, _1) == n.data.key);
+	cout << it[0]->data.key << endl;*/
+	//tree->listTree->push_back(Node());
+	/*tree->listTree[0].data.key = 5;
+	Node *n = new Node;
+	n->data.key = 5;
+	if (find(tree->listTree->begin(), tree->listTree->end(), n) != tree->listTree->end())
+		cout << "find!";
+	else
+		cout << "not find!";*/
 
-	v.data.key = 5;
-	v.data.colour = true;
-	v.left = &v1;
-	v.right = &v2;
-	v1.data.key = 3;
-	v1.data.colour = false;
-	v2.data.key = 7;
-	v2.data.colour = false;
-	listTree.push_back(v);
+	//
+	//Node v;
+	//Node v1;
+	//Node v2;
+	//v.data.key = 5;
+	//v.data.color = true;
+	//v.left = &v1;
+	//v.right = &v2;
+	//v.parent = NULL;
+	//v1.data.key = 3;
+	//v1.data.color = false;
+	//v1.parent = &v;
+	//v2.data.key = 7;
+	//v2.data.color = false;
+	//v2.parent = &v;
 
-	string fileContents = readFile();
-	//parsingFile();
-
-	
+	//tree->listTree->push_back(&v);
+	//tree->listTree->push_back(&v1);
+	//tree->listTree->push_back(&v2);
+	//
+	//delete tree;
 
 	system("pause");
 	return 0;
