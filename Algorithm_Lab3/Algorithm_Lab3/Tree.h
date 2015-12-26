@@ -21,6 +21,8 @@ struct Node {
 
 // дерево
 class Tree {
+private:
+	int k;
 public:
 	vector<Node*> listTree;
 public:

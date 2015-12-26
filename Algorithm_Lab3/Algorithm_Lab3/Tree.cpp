@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Tree.h"
 #include <algorithm>
-#include <boost/bind.hpp>
 
 Tree::Tree() {
 	;
@@ -111,30 +110,30 @@ void Tree::FillTree() {
 bool Tree::CheckTree() {
 	bool check;
 	for (auto &it : listTree) {
-		if (it[0].left != NULL && it[0].right != NULL) {
-			if (!it[0].data.color)
-				if(it[0].left->data.color && it[0].right->data.color)
+		if (it->left != NULL && it->right != NULL) {
+			if (!it->data.color)
+				if(it->left->data.color && it->right->data.color)
 					check = true;
 			else {
 				check = false;
 				return check;
 			}
 		}
-		else if (it[0].left == NULL && it[0].right != NULL) {
-			if (!it[0].data.color)
-				if(!it[0].right->data.color) {
+		else if (it->left == NULL && it->right != NULL) {
+			if (!it->data.color)
+				if(!it->right->data.color) {
 					check = false;
 					return check;
 				}
 		}
-		else if (it[0].right == NULL && it[0].left != NULL) {if (!it[0].data.color)
-				if (!it[0].left->data.color) {
+		else if (it->right == NULL && it->left != NULL) {if (!it->data.color)
+				if (!it->left->data.color) {
 					check = false;
 					return check;
 				}
 		}
 		else
-		if (it[0].right == NULL && it[0].left == NULL){
+		if (it->right == NULL && it->left == NULL){
 			check = true;
 		}
 	}
@@ -147,24 +146,23 @@ int Tree::is_red(Node *root) {
 
 int Tree::rb_assert(Node *root) {
 	int lh, rh;
-	if (root == NULL)
+	if (root == NULL) {
+		
 		return 1;
+	}
 	else {
 		Node *ln = root->left;
 		Node *rn = root->right;
-		/* Consecutive red links */
-		/*if (is_red(root)) {
-			if ((!is_red(ln) && is_red(rn)) || (is_red(ln) && !is_red(rn))) {
-				cout << "Black points violation" << endl;
-				return 0;
-			}
-			else if (is_red(ln) || is_red(rn)) {
-				cout << "Red points violation" << endl;
-				return 0;
-			}
-		}*/
-		lh = rb_assert(ln);
-		rh = rb_assert(rn);
+		int j = 0;
+		if (ln != NULL && !ln->parent->data.color && ln->parent->right == NULL)
+			j = 1;
+		else if (rn != NULL && !rn->parent->data.color && rn->parent->left == NULL)
+				k = 1;
+		lh = rb_assert(ln) + k;
+		if (k == 1)
+			k = 0;
+		rh = rb_assert(rn) + j;
+		
 		/* Black height mismatch */
 		if (lh != 0 && rh != 0 && lh != rh ) {
 			cout << "Black height violation!" << endl;
