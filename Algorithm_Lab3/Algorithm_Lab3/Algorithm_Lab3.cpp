@@ -9,10 +9,12 @@
 using namespace std;
 
 int main() {
-	Tree *tree = new Tree();
+	Tree *task1 = new Tree();
 	// Task1
-	tree->FillTree();
-	tree->rb_assert(tree->listTree[0]);
+	task1->FillTree();
+	if (task1->CheckTree())
+		task1->rb_assert(task1->listTree[0]);
+	else cout << "Red violation" << endl;
 	/*if (tree->CheckTree())
 		cout << "It's a red-black tree!" << endl;
 	else
