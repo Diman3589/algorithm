@@ -30,11 +30,12 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 		else if (tree->RBAssert(tree->listTree[0]) == -1) {
-				cout << "Black height violation!" << endl;
-				delete tree;
-				break;
-			}
+			cout << "Black height violation!" << endl;
+			delete tree;
+			break;
+		}
 		tree->show();
+			
 		delete tree;
 		break;
 	case 2:
@@ -42,6 +43,11 @@ int main(int argc, char *argv[]) {
 		tree->init(&scene, &view);
 		cout << "Enter count of vertex: ";
 		cin >> n;
+		if (n <= 0) {
+			cout << "Vertex quantity is small!" << endl;
+			delete tree;
+			break;
+		}
 		tree->BuildTree(n);
 		if (tree->RBAssert(tree->listTree[0]) == -1) {
 			cout << "Black height violation!" << endl;
@@ -49,7 +55,9 @@ int main(int argc, char *argv[]) {
 			break;
 		}
 		tree->show();
+			
 		delete tree;
+			
 		break;
 	case 3:
 		tree = new RBTree;
